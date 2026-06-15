@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% set page = 'dashboard' %}
+{% block title %}Дашборд{% endblock %}
+{% block heading %}Дашборд{% endblock %}
+{% block content %}
+<div class="banner">
+  <h2>С возвращением! 👋</h2>
+  <p>Вот что происходит в «{{ business_name }}» прямо сейчас.</p>
+</div>
+
+<div class="stats">
+  <div class="stat stat--blue">
+    <i class="stat__icon bi bi-people-fill"></i>
+    <div class="stat__label">Клиентов всего</div>
+    <div class="stat__value" data-count="{{ stats.clients }}">0</div>
+    <div class="stat__sub">в базе бота</div>
+  </div>
+  <div class="stat stat--green">
+    <i class="stat__icon bi bi-receipt"></i>
+    <div class="stat__label">Заявок за 7 дней</div>
+    <div class="stat__value" data-count="{{ stats.orders }}">0</div>
+    <div class="stat__sub">новые обращения</div>
+  </div>
+  <div class="stat stat--orange">
+    <i class="stat__icon bi bi-cash-stack"></i>
+    <div class="stat__label">Выручка за 7 дней</div>
+    <div class="stat__value" data-count="{{ "%.0f"|format(stats.revenue) }}" data-suffix=" ₽">0</div>
+    <div class="stat__sub">рублей (выполненные)</div>
+  </div>
+  <div class="stat stat--red {{ 'has-new' if new_orders > 0 }}">
+    <i class="stat__icon bi bi-bell-fill"></i>
+    <div class="stat__label">Новых заявок</div>
+    <div class="stat__value" data-count="{{ new_orders }}">0</div>
+    <div class="stat__sub">ждут обработки</div>
+  </div>
+</div>
+
+<div class="card-m">
+  <div class="card-m__head">
+    <span>Последние заявки</span>
+    <a href="/orders" class="btn-m btn-light-m btn-sm-m">Все заявки <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <table class="table-m">
+    <thead>
+      <tr><th>№</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr>
+    </thead>
+    <tbody>
+      {% for order in recent %}
+      <tr class="clickable" onclick="location.href='/orders/{{ order.id }}'">
+        <td><strong>#{{ order.id }}</strong></td>
+        <td>{{ order.user.full_name }}</td>
+        <td>{{ "%.0f"|format(order.total) }} ₽</td>
+        <td>{{ status_badge(order.status)|safe }}</td>
+        <td class="muted">{{ order.created_at.strftime('%d.%m %H:%M') }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">Заявок пока нет</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

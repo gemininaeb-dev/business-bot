@@ -1,0 +1,192 @@
+/* ===== Анимации и «вау»-эффекты ===== */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(.92); }
+  60%  { transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes floatY {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-16px); }
+}
+@keyframes shine {
+  0%   { left: -60%; }
+  100% { left: 130%; }
+}
+@keyframes pulseGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(239,77,90,.45); }
+  50%     { box-shadow: 0 0 0 7px rgba(239,77,90,0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== Появление контента ===== */
+.content > * { animation: fadeUp .55s cubic-bezier(.22,.61,.36,1) both; }
+.content > *:nth-child(1) { animation-delay: .02s; }
+.content > *:nth-child(2) { animation-delay: .10s; }
+.content > *:nth-child(3) { animation-delay: .18s; }
+
+.stats .stat { animation: popIn .5s cubic-bezier(.22,.61,.36,1) both; }
+.stats .stat:nth-child(1) { animation-delay: .08s; }
+.stats .stat:nth-child(2) { animation-delay: .16s; }
+.stats .stat:nth-child(3) { animation-delay: .24s; }
+.stats .stat:nth-child(4) { animation-delay: .32s; }
+
+/* Строки таблицы по очереди */
+.table-m tbody tr { animation: fadeIn .4s ease both; }
+.table-m tbody tr:nth-child(1) { animation-delay: .04s; }
+.table-m tbody tr:nth-child(2) { animation-delay: .09s; }
+.table-m tbody tr:nth-child(3) { animation-delay: .14s; }
+.table-m tbody tr:nth-child(4) { animation-delay: .19s; }
+.table-m tbody tr:nth-child(5) { animation-delay: .24s; }
+.table-m tbody tr:nth-child(6) { animation-delay: .29s; }
+.table-m tbody tr:nth-child(n+7) { animation-delay: .33s; }
+
+/* Пункты меню */
+.sidebar__nav .sidebar__link { animation: slideInLeft .4s ease both; }
+.sidebar__nav .sidebar__link:nth-child(1) { animation-delay: .10s; }
+.sidebar__nav .sidebar__link:nth-child(2) { animation-delay: .17s; }
+.sidebar__nav .sidebar__link:nth-child(3) { animation-delay: .24s; }
+.sidebar__nav .sidebar__link:nth-child(4) { animation-delay: .31s; }
+
+/* ===== Живой баннер с парящими фигурами ===== */
+.banner {
+  background: linear-gradient(120deg, #2b8aef, #1f6fd6, #5b6cf0, #2b8aef);
+  background-size: 300% 300%;
+  animation: fadeUp .55s ease both, gradientShift 12s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+.banner::before,
+.banner::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.10);
+  pointer-events: none;
+}
+.banner::before { width: 180px; height: 180px; top: -60px; right: 40px; animation: floatY 7s ease-in-out infinite; }
+.banner::after  { width: 110px; height: 110px; bottom: -50px; right: 180px; background: rgba(255,255,255,.07); animation: floatY 9s ease-in-out infinite reverse; }
+.banner h2, .banner p { position: relative; z-index: 1; }
+
+/* ===== Карточки-виджеты: свечение + блик ===== */
+.stat { position: relative; overflow: hidden; }
+.stat::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%; width: 50%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+.stat:hover::after { animation: shine .9s ease; }
+.stat:hover { transform: translateY(-6px) scale(1.015); }
+.stat__icon { transition: transform .3s ease; }
+.stat:hover .stat__icon { transform: scale(1.18) rotate(-6deg); }
+
+/* Цветная полоска-акцент сверху карточки */
+.stat::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: currentColor; opacity: .85;
+}
+.stat--blue::before   { color: #2b8aef; }
+.stat--green::before  { color: #1eb980; }
+.stat--orange::before { color: #f5a623; }
+.stat--red::before    { color: #ef4d5a; }
+
+/* «Новых заявок» мягко пульсирует, если их больше нуля */
+.stat--red.has-new { animation: popIn .5s both, pulseGlow 2.6s ease-in-out infinite .8s; }
+
+/* ===== Обычные карточки ===== */
+.card-m { transition: transform .2s ease, box-shadow .2s ease; }
+.card-m:hover { box-shadow: var(--shadow-hover); }
+
+/* ===== Кнопки: подъём + бегущий блик ===== */
+.btn-m { position: relative; overflow: hidden; }
+.btn-m::after {
+  content: ""; position: absolute; top: 0; left: -70%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent);
+  transform: skewX(-20deg);
+}
+.btn-m:hover::after { animation: shine .7s ease; }
+.btn-primary-m:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(43,138,239,.4); }
+.btn-m:active { transform: translateY(0) scale(.98); }
+
+/* ===== Пункты меню: индикатор-полоска ===== */
+.sidebar__link { position: relative; }
+.sidebar__link::before {
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 0; border-radius: 3px; background: #fff; transition: height .22s ease;
+}
+.sidebar__link:hover::before { height: 55%; }
+.sidebar__link.active::before { height: 70%; }
+.sidebar__link i { transition: transform .2s ease; }
+.sidebar__link:hover i { transform: scale(1.15); }
+
+/* ===== Бейджи: лёгкое появление ===== */
+.badge-m { animation: popIn .4s ease both; }
+
+/* ===== Аватар в шапке ===== */
+.topbar__avatar { transition: transform .25s ease; }
+.topbar__avatar:hover { transform: scale(1.1) rotate(6deg); }
+
+/* ===== Логотип в сайдбаре ===== */
+.sidebar__brand .logo { transition: transform .4s ease; }
+.sidebar__brand:hover .logo { transform: rotate(-12deg) scale(1.08); }
+
+/* ===== Поля ввода ===== */
+.form-control { transition: border .2s, box-shadow .2s, transform .15s; }
+.form-control:focus { transform: translateY(-1px); }
+
+/* ===== Чипы-фильтры ===== */
+.chip { transition: all .18s ease; }
+.chip:hover { transform: translateY(-2px); }
+
+/* ===== Карточка логина ===== */
+.login-card { animation: popIn .5s cubic-bezier(.22,.61,.36,1) both; }
+.login-card .logo-big { animation: floatY 4s ease-in-out infinite; }
+
+/* ===== Без повторного «появления» при переходах внутри панели =====
+   Класс .no-entrance ставится на повторных страницах: контент виден сразу,
+   мигания нет. Hover-эффекты и переливающийся баннер остаются. */
+.no-entrance .content > *,
+.no-entrance .stats .stat,
+.no-entrance .table-m tbody tr,
+.no-entrance .sidebar__nav .sidebar__link,
+.no-entrance .badge-m,
+.no-entrance .login-card {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+/* баннер: убираем «въезд», но оставляем переливающийся градиент */
+.no-entrance .banner {
+  animation: gradientShift 12s ease infinite !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ===== Плавный кросс-фейд между страницами вместо белой вспышки ===== */
+@view-transition { navigation: auto; }
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: .28s; }
+
+/* ===== Уважение к настройкам доступности ===== */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}

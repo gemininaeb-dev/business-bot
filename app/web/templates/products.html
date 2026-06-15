@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% set page = 'products' %}
+{% block title %}Каталог{% endblock %}
+{% block heading %}Каталог товаров{% endblock %}
+{% block content %}
+<div class="row-m cols-7-5">
+  <div>
+    <div class="card-m">
+      <div class="card-m__head">
+        <span>Товары и услуги</span>
+        <form method="post" action="/products/import" style="margin:0;">
+          <button class="btn-m btn-light-m btn-sm-m"><i class="bi bi-download"></i> Импорт демо</button>
+        </form>
+      </div>
+      <table class="table-m">
+        <thead>
+          <tr><th>Название</th><th>Цена</th><th>Статус</th><th class="text-end">Действия</th></tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+          <tr>
+            <td><strong>{{ p.name }}</strong></td>
+            <td>{{ "%.0f"|format(p.price) }} ₽</td>
+            <td>
+              {% if p.is_active %}
+              <span class="badge-m badge-green">Активен</span>
+              {% else %}<span class="badge-m badge-gray">Скрыт</span>{% endif %}
+            </td>
+            <td class="text-end" style="white-space:nowrap;">
+              <form method="post" action="/products/{{ p.id }}/toggle" style="display:inline;">
+                <button class="btn-m btn-light-m btn-sm-m" title="Показать/скрыть">
+                  <i class="bi bi-eye{{ '-slash' if p.is_active else '' }}"></i></button>
+              </form>
+              <form method="post" action="/products/{{ p.id }}/delete" style="display:inline;"
+                    onsubmit="return confirm('Удалить товар?')">
+                <button class="btn-m btn-danger-m btn-sm-m"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="empty">Каталог пуст</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="card-m">
+      <div class="card-m__head"><i class="bi bi-plus-circle"></i>&nbsp; Новый товар</div>
+      <div class="card-m__body">
+        <form method="post" action="/products">
+          <div class="form-group">
+            <label class="form-label">Название</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Цена, ₽</label>
+            <input type="number" step="0.01" min="0" name="price" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Описание</label>
+            <textarea name="description" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ссылка на фото (необязательно)</label>
+            <input type="url" name="photo_url" class="form-control">
+          </div>
+          <button class="btn-m btn-primary-m" style="width:100%;justify-content:center;">Добавить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

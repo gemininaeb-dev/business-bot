@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% set page = 'orders' %}
+{% block title %}Заявка #{{ order.id }}{% endblock %}
+{% block heading %}Заявка #{{ order.id }}{% endblock %}
+{% block content %}
+<a href="/orders" class="btn-m btn-light-m btn-sm-m" style="margin-bottom:18px;">
+  <i class="bi bi-arrow-left"></i> К списку</a>
+
+<div class="row-m cols-7-5">
+  <div>
+    <div class="card-m">
+      <div class="card-m__head">
+        <span>Состав заявки</span>
+        {{ status_badge(order.status)|safe }}
+      </div>
+      <table class="table-m">
+        <thead><tr><th>Товар</th><th>Кол-во</th><th class="text-end">Сумма</th></tr></thead>
+        <tbody>
+          {% for item in order.items %}
+          <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="text-end">{{ "%.0f"|format(item.price * item.quantity) }} ₽</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="2">Итого</td>
+            <td class="text-end">{{ "%.0f"|format(order.total) }} ₽</td></tr>
+        </tfoot>
+      </table>
+      {% if order.comment %}
+      <div class="card-m__body" style="padding-top:0;">
+        <div class="alert-m" style="background:#f4f6f9;color:#4a5567;">
+          <i class="bi bi-chat-left-text"></i> {{ order.comment }}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="card-m">
+      <div class="card-m__head">Клиент</div>
+      <div class="card-m__body">
+        <p style="margin:0 0 8px;font-size:1.05rem;"><strong>{{ order.user.full_name }}</strong></p>
+        {% if order.user.username %}
+        <p class="muted" style="margin:0 0 6px;"><i class="bi bi-telegram"></i> @{{ order.user.username }}</p>{% endif %}
+        {% if order.user.phone %}
+        <p style="margin:0 0 6px;"><i class="bi bi-telephone"></i> {{ order.user.phone }}</p>{% endif %}
+        <p class="muted" style="margin:0;font-size:.85rem;">
+          <i class="bi bi-clock"></i> {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+      </div>
+    </div>
+
+    <div class="card-m">
+      <div class="card-m__head">Изменить статус</div>
+      <div class="card-m__body">
+        <form method="post" action="/orders/{{ order.id }}/status" style="display:grid;gap:9px;">
+          {% for value, label in statuses %}
+          <button name="status" value="{{ value }}"
+                  class="btn-m {{ 'btn-primary-m' if order.status.value == value else 'btn-light-m' }}"
+                  style="justify-content:center;">{{ label }}</button>
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

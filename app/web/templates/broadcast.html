@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% set page = 'broadcast' %}
+{% block title %}Рассылка{% endblock %}
+{% block heading %}Рассылка по клиентам{% endblock %}
+{% block content %}
+<div class="row-m cols-7-5">
+  <div>
+    {% if sent is not none %}
+    <div class="alert-m alert-success-m">
+      <i class="bi bi-check-circle"></i> Отправлено сообщений: {{ sent }} из {{ total }}.
+    </div>
+    {% endif %}
+    <div class="card-m">
+      <div class="card-m__head"><i class="bi bi-megaphone-fill"></i>&nbsp; Новое сообщение</div>
+      <div class="card-m__body">
+        <form method="post" action="/broadcast">
+          <div class="form-group">
+            <label class="form-label">Текст сообщения</label>
+            <textarea name="text" class="form-control" rows="6" required
+                      placeholder="Например: Сегодня скидка 20% на всё меню!"></textarea>
+          </div>
+          <button class="btn-m btn-primary-m"
+                  onclick="return confirm('Отправить сообщение всем клиентам?')">
+            <i class="bi bi-send"></i> Отправить всем
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="stat stat--blue">
+      <i class="stat__icon bi bi-people-fill"></i>
+      <div class="stat__label">Получателей</div>
+      <div class="stat__value" data-count="{{ recipients }}">0</div>
+      <div class="stat__sub">клиентов в базе</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

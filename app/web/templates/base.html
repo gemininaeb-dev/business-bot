@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Входные анимации — только при первом заходе за сессию.
+    // При переходах внутри панели контент показывается сразу (без мигания).
+    if (sessionStorage.getItem('visited')) {
+      document.documentElement.classList.add('no-entrance');
+    } else {
+      sessionStorage.setItem('visited', '1');
+    }
+  </script>
+  <title>{% block title %}Панель{% endblock %} — {{ business_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/static/style.css" rel="stylesheet">
+  <link href="/static/animations.css" rel="stylesheet">
+</head>
+<body>
+{% if request.session.get('is_admin') %}
+{% set page = page|default('') %}
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <span class="logo"><i class="bi bi-shop"></i></span>
+      <span>{{ business_name }}</span>
+    </div>
+    <div class="sidebar__label">Меню</div>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link {{ 'active' if page == 'dashboard' }}" href="/">
+        <i class="bi bi-grid-1x2-fill"></i> Дашборд</a>
+      <a class="sidebar__link {{ 'active' if page == 'orders' }}" href="/orders">
+        <i class="bi bi-receipt"></i> Заявки</a>
+      <a class="sidebar__link {{ 'active' if page == 'products' }}" href="/products">
+        <i class="bi bi-box-seam-fill"></i> Каталог</a>
+      <a class="sidebar__link {{ 'active' if page == 'broadcast' }}" href="/broadcast">
+        <i class="bi bi-megaphone-fill"></i> Рассылка</a>
+    </nav>
+    <div class="sidebar__spacer"></div>
+    <div class="sidebar__footer">
+      <a class="sidebar__logout" href="/logout"><i class="bi bi-box-arrow-right"></i> Выйти</a>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="topbar__toggle" id="toggle"><i class="bi bi-list"></i></button>
+      <h1 class="topbar__title">{% block heading %}{% endblock %}</h1>
+      <div class="topbar__user">
+        <span class="d-none-mobile">Администратор</span>
+        <span class="topbar__avatar">A</span>
+      </div>
+    </header>
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlay');
+  document.getElementById('toggle')?.addEventListener('click', () => {
+    sb.classList.toggle('open'); ov.classList.toggle('show');
+  });
+  ov?.addEventListener('click', () => { sb.classList.remove('open'); ov.classList.remove('show'); });
+</script>
+<script src="/static/animations.js"></script>
+{% else %}
+{% block fullpage %}{% endblock %}
+{% endif %}
+</body>
+</html>
